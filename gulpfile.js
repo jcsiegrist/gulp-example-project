@@ -3,6 +3,7 @@
 var gulp = require('gulp');
 var buffer = require('vinyl-buffer');
 var source = require('vinyl-source-stream');
+var livereload = require('gulp-livereload');
 var watch = require('gulp-watch');
 
 // sass
@@ -30,7 +31,8 @@ gulp.task('js', function() {
         .pipe(source('app.js'))
         .pipe(buffer())
         .pipe(uglify())
-        .pipe(gulp.dest('./js'));
+        .pipe(gulp.dest('./js'))
+        .pipe(livereload());
 });
 
 gulp.task('sass', function() {
@@ -42,11 +44,13 @@ gulp.task('sass', function() {
             browsers: ['last 2 versions'],
             cascade: false
         }))
-        .pipe(gulp.dest('./css'));
+        .pipe(gulp.dest('./css'))
+        .pipe(livereload());
 });
 
 
 gulp.task('default', ['js', 'sass'], function() {
+    livereload.listen();
     gulp.watch(sassSource, ['sass']);
     gulp.watch(jsSource, ['js']);
 });
