@@ -7,8 +7,14 @@ var livereload = require('gulp-livereload');
 var watch = require('gulp-watch');
 
 // sass
-var autoprefixer = require('gulp-autoprefixer');
+var autoprefixer = require('autoprefixer');
+var postcss = require('gulp-postcss');
+var sprites = require('postcss-sprites').default;
 var sass = require('gulp-sass');
+var spriteOpts = {
+    stylesheetPath: './css',
+    spritePath: './img/'
+};
 
 // js
 var babel = require('babelify');
@@ -16,7 +22,9 @@ var browserify = require('browserify');
 var uglify = require('gulp-uglify');
 
 var jsSource = './_js/app.js';
-var sassSource = './_scss/style.scss';
+var sassSource = './_scss/**/*.scss';
+
+
 
 gulp.task('js', function() {
     var bundler = browserify(jsSource, {
@@ -30,7 +38,7 @@ gulp.task('js', function() {
         .bundle()
         .pipe(source('app.js'))
         .pipe(buffer())
-        .pipe(uglify())
+        .pipe(uglify().on('error', sass.logError))
         .pipe(gulp.dest('./js'))
         .pipe(livereload());
 });
@@ -39,11 +47,13 @@ gulp.task('sass', function() {
     gulp.src(sassSource)
         .pipe(sass({
             outputStyle: 'compressed'
-        }))
-        .pipe(autoprefixer({
-            browsers: ['last 2 versions'],
-            cascade: false
-        }))
+        }).on('error', sass.logError))
+        .pipe(
+            postcss([
+                autoprefixer,
+                sprites(spriteOpts)
+            ])
+        )
         .pipe(gulp.dest('./css'))
         .pipe(livereload());
 });

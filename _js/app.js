@@ -1,3 +1,8 @@
-var math = require('./lib/math.js');
+(function() {
+    'use strict';
 
-alert("2π = " + math.sum(math.pi, math.pi));
+    var $ = require('jquery');
+
+    // your code here ....
+
+}());
